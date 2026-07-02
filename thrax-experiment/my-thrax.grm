@@ -1,0 +1,12 @@
+import 'byte.grm' as bytelib;
+
+sigma_star = bytelib.kBytes*;
+consonants = "b" | "c" | "d" | "f" | "g" | "h" | "j" | "k" | "l" | "m" | "n" | "p" | "q" | "r" | "s" | "t" | "v" | "w" | "x" | "z";
+
+ca = CDRewrite["ca" : "cha", "", "", sigma_star];
+chandrabindu = CDRewrite["n̐" | "m̐" : "n", "", "", sigma_star];
+v = CDRewrite["v" : "b" | "bh", "", "", sigma_star];
+maybe_remove_a = CDRewrite["a" : "a" | "o" | "", "", "", sigma_star];
+
+
+export TRANSLITERATOR = Optimize[ca @ chandrabindu @ v @ maybe_remove_a];
