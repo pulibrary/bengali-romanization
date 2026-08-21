@@ -3,10 +3,29 @@ import 'byte.grm' as bytelib;
 sigma_star = bytelib.kBytes*;
 consonants = "b" | "c" | "d" | "f" | "g" | "h" | "j" | "k" | "l" | "m" | "n" | "p" | "q" | "r" | "s" | "t" | "v" | "w" | "x" | "z";
 
-ca = CDRewrite["ca" : "cha", "", "", sigma_star];
 chandrabindu = CDRewrite["n̐" | "m̐" : "n", "", "", sigma_star];
 v = CDRewrite["v" : "b" | "bh", "", "", sigma_star];
 maybe_remove_a = CDRewrite["a" : "a" | "o" | "", "", "", sigma_star];
 
+remove_t = CDRewrite["ṭ" : "t", "", "", sigma_star];
+remove_d = CDRewrite["ḍ" : "d", "", "", sigma_star];
+nga = CDRewrite["ṅ" : "ng", "", "", sigma_star];
+anusvara = CDRewrite["ṃ" : "ng" | "n" | "m", "", "", sigma_star];
+sha = CDRewrite["ś" : "sh", "", "", sigma_star];
+sa = CDRewrite["s" : "sh" | "s", "", "", sigma_star];
 
-export TRANSLITERATOR = Optimize[ca @ chandrabindu @ v @ maybe_remove_a];
+ya = CDRewrite["ya" : "ja", "", "", sigma_star];
+dot_y = CDRewrite["ẏ" : "y", "", "", sigma_star];
+
+cch = CDRewrite["cch" : "ch" | "chch" | "chh" | "chchh", "", "", sigma_star];
+cc = CDRewrite["cc" : "cch" | "chch" | "cc", "", "", sigma_star];
+
+ca = CDRewrite["c" : "c" | "ch", "", "", sigma_star];
+cha = CDRewrite["ch" : "ch" | "chh", "", "", sigma_star];
+
+ri = CDRewrite["r̥" : "ri", "", "", sigma_star];
+rh = CDRewrite["ṛh" : "rh" | "r", "", "", sigma_star];
+e_to_a = CDRewrite["e" : "a" | "ya" | "e", "", "", sigma_star];
+remove_i = CDRewrite["ī" : "i", "", "", sigma_star];
+
+export TRANSLITERATOR = Optimize[ca @ chandrabindu @ v @ maybe_remove_a @ remove_t @ remove_d @ nga @ anusvara @ sha @ sa @ ya @ dot_y @ cha @ cch @ cc @ ri @ rh @ e_to_a @ remove_i];
