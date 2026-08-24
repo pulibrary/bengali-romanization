@@ -74,5 +74,6 @@
       };
     in {
       defaultPackage.${system} = thrax;
+      packages.${system} = thrax;
     };
 }
