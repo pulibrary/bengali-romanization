@@ -1,8 +1,8 @@
-use rustfst::algorithms::rm_epsilon::rm_epsilon;
+use rustfst::algorithms::{rm_epsilon::rm_epsilon, compose::compose};
 use rustfst::prelude::*;
 use rustfst::{fst_impls::VectorFst, fst_traits::SerializableFst, semirings::TropicalWeight};
 
-const RAW_FST: &[u8; 126462] = include_bytes!("../../TRANSLITERATOR");
+const RAW_FST: &[u8; 134176] = include_bytes!("../../TRANSLITERATOR");
 
 fn main() {
     println!("This program will attempt to read the fst from disk");
@@ -19,8 +19,12 @@ fn main() {
         fst.start().unwrap()
     );
 
+    println!("Do we have a symbol table for it? #{:?}", fst.input_symbols().is_some());
+
     let input_str = "masala";
     let input_bytes = input_str.as_bytes();
+
+    // The FST derived from the string we want to check
     let mut input_fst = VectorFst::<TropicalWeight>::new();
 
     let start_state = input_fst.add_state();
@@ -43,15 +47,15 @@ fn main() {
         .unwrap();
 
     if let Some(st) = fst.input_symbols() {
+        println!("We are setting the input symbols friends");
         input_fst.set_input_symbols(st.clone());
     }
 
-    let composed: VectorFst<TropicalWeight> =
-        rustfst::algorithms::compose::compose(input_fst, fst).unwrap();
+    let composed: VectorFst<TropicalWeight> = compose(input_fst, fst).unwrap();
     println!("Composed FST has {} states", composed.num_states());
 
     let mut output_fst = composed.clone();
-    rustfst::algorithms::project(&mut output_fst, ProjectType::ProjectOutput);
+    project(&mut output_fst, ProjectType::ProjectOutput);
 
     rm_epsilon(&mut output_fst).unwrap();
 
@@ -60,5 +64,5 @@ fn main() {
     shortest
         .string_paths_iter()
         .unwrap()
-        .for_each(|s| println!("Hello we have a string path it is so nice, {s:?}"));
+        .for_each(|s| println!("Hello we have a string path it is so nice, {:?}", s.olabels()));
 }
