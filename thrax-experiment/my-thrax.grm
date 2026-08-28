@@ -3,29 +3,76 @@ import 'byte.grm' as bytelib;
 sigma_star = bytelib.kBytes*;
 consonants = "b" | "c" | "d" | "f" | "g" | "h" | "j" | "k" | "l" | "m" | "n" | "p" | "q" | "r" | "s" | "t" | "v" | "w" | "x" | "z";
 
-chandrabindu = CDRewrite["n̐" | "m̐" : "n", "", "", sigma_star];
-v = CDRewrite["v" : "b" | "bh", "", "", sigma_star];
-maybe_remove_a = CDRewrite["a" : "a" | "o" | "", "", "", sigma_star];
+func double_it[c] {
+  return c : c c;
+}
 
-remove_t = CDRewrite["ṭ" : "t", "", "", sigma_star];
-remove_d = CDRewrite["ḍ" : "d", "", "", sigma_star];
-nga = CDRewrite["ṅ" : "ng", "", "", sigma_star];
-anusvara = CDRewrite["ṃ" : "ng" | "n" | "m", "", "", sigma_star];
-sha = CDRewrite["ś" : "sh", "", "", sigma_star];
-sa = CDRewrite["s" : "sh" | "s", "", "", sigma_star];
+func ya_double_c[c] {
+  return c "ya" : c c;
+}
 
-ya = CDRewrite["y" : "j" | "y", "", "", sigma_star];
-dot_y = CDRewrite["ẏ" : "y", "", "", sigma_star];
+# consonants at this stage of the pipeline, minus "h"
+consonants_no_h = "b" | "c" | "d" | "f" | "g" | "j" | "k" | "l"
+                | "m" | "n" | "p" | "q" | "r" | "s" | "t" | "v"
+                | "w" | "x" | "z";
 
-cch = CDRewrite["cch" : "ch" | "chch" | "chh" | "chchh", "", "", sigma_star];
-cc = CDRewrite["cc" : "cch" | "chch" | "cc", "", "", sigma_star];
+ya_double = CDRewrite[
+   ya_double_c["b"] | ya_double_c["c"] | ya_double_c["d"] | ya_double_c["f"]
+ | ya_double_c["g"] | ya_double_c["j"] | ya_double_c["k"] | ya_double_c["l"]
+ | ya_double_c["m"] | ya_double_c["n"] | ya_double_c["p"] | ya_double_c["q"]
+ | ya_double_c["r"] | ya_double_c["s"] | ya_double_c["t"] | ya_double_c["v"]
+ | ya_double_c["w"] | ya_double_c["x"] | ya_double_c["z"]
+,
+"", "", sigma_star, 'ltr', 'opt'
+];
 
-ca = CDRewrite["c" : "c" | "ch", "", "", sigma_star];
-cha = CDRewrite["ch" : "ch" | "chh", "", "", sigma_star];
+chandrabindu = CDRewrite["n̐" | "m̐" : "n", "", "", sigma_star, 'ltr', 'opt'];
+v = CDRewrite["v" | "b" | "bh" : "b" | "bh" | "v", "", "", sigma_star, 'ltr', 'opt'];
+maybe_remove_a = CDRewrite["a" : "o" | "", "", "", sigma_star, 'ltr', 'opt'];
 
-ri = CDRewrite["r̥" : "ri", "", "", sigma_star];
+remove_t = CDRewrite["ṭ" : "t", "", "", sigma_star, 'ltr', 'opt'];
+remove_d = CDRewrite["ḍ" : "d", "", "", sigma_star, 'ltr', 'opt'];
+nga = CDRewrite["ṅ" : "ng", "", "", sigma_star, 'ltr', 'opt'];
+anusvara = CDRewrite["ṃ" : "ng" | "n" | "m", "", "", sigma_star, 'ltr', 'opt'];
+sha = CDRewrite["ś" : "sh", "", "", sigma_star, 'ltr', 'opt'];
+sa = CDRewrite["s" : "sh", "", "", sigma_star, 'ltr', 'opt'];
+b_after_sh = CDRewrite["b" : "", "sh", "", sigma_star, 'ltr', 'opt'];
+
+ya = CDRewrite["y" : "j", "", "", sigma_star, 'ltr', 'opt'];
+dot_y = CDRewrite["ẏ" : "y", "", "", sigma_star, 'ltr', 'opt'];
+
+cch = CDRewrite["cch" : "ch" | "chch" | "chh" | "chchh", "", "", sigma_star, 'ltr', 'opt'];
+cc = CDRewrite["cc" : "cch" | "chch" | "cc", "", "", sigma_star, 'ltr', 'opt'];
+
+ca = CDRewrite["c" : "ch", "", "", sigma_star, 'ltr', 'opt'];
+cha = CDRewrite["ch" : "chh", "", "", sigma_star, 'ltr', 'opt'];
+
+ri = CDRewrite["r̥" : "ri", "", "", sigma_star, 'ltr', 'opt'];
 rh = CDRewrite["ṛh" : "rh" | "r", "", "", sigma_star];
-e_to_a = CDRewrite["e" : "a" | "ya" | "e", "", "", sigma_star];
-remove_i = CDRewrite["ī" : "i", "", "", sigma_star];
+e_to_a = CDRewrite["e" : "a" | "ya", "", "", sigma_star, 'ltr', 'opt'];
+remove_i = CDRewrite["ī" : "i" | "ee", "", "", sigma_star, 'ltr', 'opt'];
 
-export TRANSLITERATOR = Optimize[ca @ chandrabindu @ v @ maybe_remove_a @ remove_t @ remove_d @ nga @ anusvara @ sha @ sa @ ya @ dot_y @ cha @ cch @ cc @ ri @ rh @ e_to_a @ remove_i];
+
+# aa can become a but never o, so we protect it as a special [PROTECT_AA] character
+# unfortunately, it does not work, I get Rewrite failed for "aa" when I try to use it
+protect_aa = CDRewrite["aa" : "[PROTECT_AA]",  "", "", sigma_star];
+aa_to_a = CDRewrite["[PROTECT_AA]" : "a" | "aa", "", "", sigma_star];
+
+
+replace_h_with_double_consonant = CDRewrite[
+  ("ḥ" : "")
+  (
+    double_it["b"] | double_it["c"] | double_it["d"] | double_it["f"]
+  | double_it["g"] | double_it["h"] | double_it["j"] | double_it["k"]
+  | double_it["l"] | double_it["m"] | double_it["n"] | double_it["p"]
+  | double_it["q"] | double_it["r"] | double_it["s"] | double_it["t"]
+  | double_it["v"] | double_it["w"] | double_it["x"] | double_it["z"]
+  ),
+  "", "", sigma_star, 'ltr', 'opt'
+];
+
+export TRANSLITERATOR = Optimize[
+    replace_h_with_double_consonant @ ca @ chandrabindu @ v @ maybe_remove_a @ remove_t @
+    remove_d @ nga @
+    anusvara @ sha @ sa @ b_after_sh @ ya @ dot_y @ cha @ cch @ cc @ ri @ rh @ e_to_a @ remove_i @
+];
