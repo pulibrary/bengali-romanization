@@ -1,0 +1,7 @@
+[package]
+name = "can-rust-read-the-fst"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rustfst = "1.3.1"
