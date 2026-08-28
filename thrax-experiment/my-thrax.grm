@@ -14,7 +14,7 @@ anusvara = CDRewrite["ṃ" : "ng" | "n" | "m", "", "", sigma_star];
 sha = CDRewrite["ś" : "sh", "", "", sigma_star];
 sa = CDRewrite["s" : "sh" | "s", "", "", sigma_star];
 
-ya = CDRewrite["ya" : "ja", "", "", sigma_star];
+ya = CDRewrite["y" : "j" | "y", "", "", sigma_star];
 dot_y = CDRewrite["ẏ" : "y", "", "", sigma_star];
 
 cch = CDRewrite["cch" : "ch" | "chch" | "chh" | "chchh", "", "", sigma_star];
