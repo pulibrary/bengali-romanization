@@ -11,10 +11,6 @@ func ya_double_c[c] {
   return c "ya" : c c;
 }
 
-# consonants at this stage of the pipeline, minus "h"
-consonants_no_h = "b" | "c" | "d" | "f" | "g" | "j" | "k" | "l"
-                | "m" | "n" | "p" | "q" | "r" | "s" | "t" | "v"
-                | "w" | "x" | "z";
 
 ya_double = CDRewrite[
    ya_double_c["b"] | ya_double_c["c"] | ya_double_c["d"] | ya_double_c["f"]
@@ -73,6 +69,6 @@ replace_h_with_double_consonant = CDRewrite[
 
 export TRANSLITERATOR = Optimize[
     replace_h_with_double_consonant @ ca @ chandrabindu @ v @ maybe_remove_a @ remove_t @
-    remove_d @ nga @
-    anusvara @ sha @ sa @ b_after_sh @ ya @ dot_y @ cha @ cch @ cc @ ri @ rh @ e_to_a @ remove_i @
+    remove_d @ nga @ ya_double
+    anusvara @ sha @ sa @ b_after_sh @ ya @ dot_y @ cha @ cch @ cc @ ri @ rh @ e_to_a @ remove_i
 ];
